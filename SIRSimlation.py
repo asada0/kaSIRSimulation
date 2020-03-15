@@ -38,7 +38,7 @@ for t in range(days):
     Susceptible[t + 1], Infected[t + 1], Recovered[t + 1] = ODE_SIR(Susceptible[t], Infected[t], Recovered[t], InfectionRate, RecoverRate)
     if Infected[t + 1] < 1.0 / Population:
         break
-spyder
+
 Infected *= Population
 Susceptible *= Population
 Recovered *= Population
