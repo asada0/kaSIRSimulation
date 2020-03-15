@@ -5,6 +5,7 @@ Created on Sat Mar 15 14:00:00 2020
 @author: Kazunori Asada
 """
 
+import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -45,6 +46,9 @@ Recovered *= Population
 TerminateDay = t + 1
 TotalInfection = Recovered[TerminateDay] # 総感染者数
 
+# 2020/01/16に日本国内で初の感染者が確認されてからの経過日数
+ElapsedDays = (datetime.datetime.today() - datetime.datetime(2020, 1, 16)).days
+
 # -- プロット
 X = np.zeros(days + 1)
 for t in range(days + 1):
@@ -57,6 +61,9 @@ plt.plot(X, Susceptible, label="Susceptible")
 plt.plot(X, Infected, label = "Infected")
 plt.plot(X, Recovered, label = "Recovered")
 plt.xlim(0, TerminateDay)
+if ElapsedDays < TerminateDay:
+    plt.vlines(ElapsedDays, 0, Population, 'red', linestyles='dashed', label='today')
+    plt.text(ElapsedDays +2, Population/2, 'Today', rotation=90, verticalalignment='center')
 plt.legend()
 plt.show()
 print("Basic reproduction number (R0): ", R0)
