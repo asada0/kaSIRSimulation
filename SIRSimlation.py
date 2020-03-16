@@ -20,7 +20,7 @@ def ODE_SIR(s0, i0, r0, infR, recR):
     return s1, i1, r1
     
 days = 365
-# 配列変数
+# 配列変数初期化
 Susceptible = np.zeros(days + 1) # 感受者数
 Infected = np.zeros(days + 1) # 感染者数
 Recovered = np.zeros(days + 1) # 回復者数
@@ -32,11 +32,13 @@ RecoverRate = 0.14 # 快復率
 Infected[0] = 1.0 / Population # 初期感染者数
 Susceptible[0] = 1.0 - Infected[0] # 初期感受者数
 Recovered[0] = 0.0 # 初期快復者数
+
+# 変数初期化
 PeakPatient = 0.0 #ピーク時の患者数
 PeakDay = 0 # ピークまでの日数
-
 R0 = InfectionRate / RecoverRate # 基本再生産数
 
+# 毎日の計算
 for t in range(days):
     Susceptible[t + 1], Infected[t + 1], Recovered[t + 1] = ODE_SIR(Susceptible[t], Infected[t], Recovered[t], InfectionRate, RecoverRate)
     if Infected[t + 1] < 1.0 / Population:
@@ -45,6 +47,7 @@ for t in range(days):
         PeakPatient = Infected[t]
         PeakDay = t
     
+# 後処理
 Infected *= Population
 Susceptible *= Population
 Recovered *= Population
@@ -52,10 +55,10 @@ TerminateDay = t + 1
 PeakPatient *= Population
 TotalInfection = Recovered[TerminateDay] # 総感染者数
 
-# 2020/01/16に日本国内で初の感染者が確認されてからの経過日数
+# 2020/01/16に日本国内で初の感染者が確認されてからの経過日数 by Yoshihiko Miyaichi
 ElapsedDays = (datetime.datetime.today() - datetime.datetime(2020, 1, 16)).days
 
-# -- プロット
+# 結果グラフ表示
 X = np.zeros(days + 1)
 for t in range(days + 1):
     X[t] = t
@@ -67,11 +70,16 @@ plt.plot(X, Susceptible, label="Susceptible")
 plt.plot(X, Infected, label = "Infected")
 plt.plot(X, Recovered, label = "Recovered")
 plt.xlim(0, TerminateDay)
+
+# by Yoshihiko Miyaichi
 if ElapsedDays < TerminateDay:
     plt.vlines(ElapsedDays, 0, Population, 'red', linestyles='dashed', label='today')
     plt.text(ElapsedDays +2, Population/2, 'Today', rotation=90, verticalalignment='center')
+
 plt.legend()
 plt.show()
+
+# 結果文字表示
 print("Basic reproduction number (R0): ", R0)
 print("Number of infected people: %d/%d (%d%%)" % (TotalInfection, Population, TotalInfection * 100.0 / Population))
 print("Peak: %d patients, day %d" % (PeakPatient, PeakDay))
